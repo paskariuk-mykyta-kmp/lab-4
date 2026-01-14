@@ -8,9 +8,9 @@ namespace Lab4_Shop
 {
     class Program
     {
-        // Основний склад магазину
+       
         static List<Product> inventory = new List<Product>();
-        // НОВЕ: Кошик покупця
+       
         static List<Product> cart = new List<Product>();
 
         static List<User> users = new List<User>();
@@ -18,11 +18,11 @@ namespace Lab4_Shop
 
         static void Main(string[] args)
         {
-            // Вмикаємо підтримку українських літер та емодзі
+           
             Console.OutputEncoding = Encoding.UTF8;
             InitializeData();
 
-            // --- 1. АВТОРИЗАЦІЯ ---
+           
             while (currentUser == null)
             {
                 DrawHeader("АВТОРИЗАЦІЯ");
@@ -37,19 +37,19 @@ namespace Lab4_Shop
                 if (currentUser == null) { PrintError("Невірні дані!"); Console.ReadKey(); }
             }
 
-            // --- 2. ГОЛОВНЕ МЕНЮ ---
+         
             bool running = true;
             while (running)
             {
                 Console.Clear();
                 DrawHeader($"МАГАЗИН | 👤 {currentUser.Username}");
 
-                // Інфо-панель
+             
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine($"  Роль: {(currentUser.IsAdmin ? "АДМІН" : "КЛІЄНТ")}");
                 Console.Write($"  Товарів на складі: {inventory.Count}");
 
-                // Якщо це клієнт - показуємо статус кошика
+               
                 if (!currentUser.IsAdmin)
                 {
                     Console.Write(" | ");
@@ -63,7 +63,7 @@ namespace Lab4_Shop
                 Console.ResetColor();
                 Console.WriteLine();
 
-                // Загальні пункти
+                
                 PrintMenuOption("1", "📋 Таблиця товарів");
                 PrintMenuOption("2", "🔍 Пошук");
                 PrintMenuOption("3", "💰 Сортування (за ціною)");
@@ -71,7 +71,7 @@ namespace Lab4_Shop
 
                 Console.WriteLine();
 
-                // --- МЕНЮ ДЛЯ КЛІЄНТА (Замовлення) ---
+               
                 if (!currentUser.IsAdmin)
                 {
                     WriteColor("  --- ПОКУПКИ ---", ConsoleColor.Cyan);
@@ -80,7 +80,7 @@ namespace Lab4_Shop
                     PrintMenuOption("6", "💳 Оформити замовлення (Чек)");
                 }
 
-                // --- МЕНЮ ДЛЯ АДМІНА ---
+               
                 if (currentUser.IsAdmin)
                 {
                     WriteColor("  --- АДМІН ПАНЕЛЬ ---", ConsoleColor.DarkYellow);
@@ -98,10 +98,10 @@ namespace Lab4_Shop
 
                 string choice = Console.ReadLine();
 
-                // Обробка вибору
+               
                 if (currentUser.IsAdmin)
                 {
-                    // Логіка АДМІНА
+                    
                     switch (choice)
                     {
                         case "1": ShowTable(); break;
@@ -119,15 +119,15 @@ namespace Lab4_Shop
                 }
                 else
                 {
-                    // Логіка КЛІЄНТА
+                    
                     switch (choice)
                     {
                         case "1": ShowTable(); break;
                         case "2": SearchItem(); break;
                         case "3": SortItems(); break;
                         case "4": ShowStatistics(); break;
-                        case "5": AddToCart(); break;   // Додавання
-                        case "6": Checkout(); break;    // Покупка
+                        case "5": AddToCart(); break; 
+                        case "6": Checkout(); break;    
                         case "0": running = false; break;
                         default: PrintError("Невірний вибір!"); Console.ReadKey(); break;
                     }
@@ -135,18 +135,18 @@ namespace Lab4_Shop
             }
         }
 
-        // --- МЕТОДИ ПОКУПКИ (НОВІ) ---
+     
 
         static void AddToCart()
         {
             DrawHeader("ДОДАТИ В КОШИК");
-            ShowTable(); // Показуємо товари, щоб користувач бачив ID
+            ShowTable();
             Console.Write("\nВведіть ID товару: ");
 
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 Product foundItem = null;
-                // Шукаємо товар в інвентарі
+                
                 foreach (var item in inventory)
                 {
                     if (item.Id == id)
@@ -199,18 +199,18 @@ namespace Lab4_Shop
 
             Console.WriteLine("Дякуємо за покупку! 🎉");
 
-            cart.Clear(); // Очищаємо кошик після покупки
+            cart.Clear();
             Console.ReadKey();
         }
 
-        // --- ОСНОВНІ МЕТОДИ (Оновлені під вимоги) ---
+       
 
         static void InitializeData()
         {
             users.Add(new User("admin", "admin", true));
             users.Add(new User("user", "1234", false));
 
-            // [ВИМОГА] Створення масиву перед додаванням
+          
             Product[] initialItems = new Product[]
             {
                 new Book(1, "Кобзар", 350, "Т. Шевченко", 700),
@@ -221,7 +221,7 @@ namespace Lab4_Shop
                 new Book(6, "C# in Depth", 1200, "Jon Skeet", 500)
             };
 
-            // [ВИМОГА] Цикл додавання
+         
             foreach (var item in initialItems)
             {
                 inventory.Add(item);
@@ -243,7 +243,7 @@ namespace Lab4_Shop
                 if (item.Price > max) max = item.Price;
                 if (item.Price < min) min = item.Price;
             }
-            // [ВИМОГА] Середнє значення
+        
             double average = sum / inventory.Count;
 
             Console.WriteLine($"  Всього товарів:    {inventory.Count}");
@@ -319,7 +319,7 @@ namespace Lab4_Shop
             return null;
         }
 
-        // --- МЕТОДИ АДМІНА ---
+      
         static int GetNewId() { if (inventory.Count == 0) return 1; int max = 0; foreach (var i in inventory) if (i.Id > max) max = i.Id; return max + 1; }
 
         static void AddBook() { try { DrawHeader("КНИГА"); Console.Write("Назва: "); string t = Console.ReadLine(); Console.Write("Ціна: "); double p = double.Parse(Console.ReadLine()); Console.Write("Автор: "); string a = Console.ReadLine(); Console.Write("Сторінок: "); int pg = int.Parse(Console.ReadLine()); inventory.Add(new Book(GetNewId(), t, p, a, pg)); PrintSuccess("Додано!"); } catch { PrintError("Дані некоректні."); } Console.ReadKey(); }
@@ -341,7 +341,7 @@ namespace Lab4_Shop
             Console.ReadKey();
         }
 
-        // --- ВІЗУАЛ ---
+      
         static void DrawHeader(string t) { Console.Clear(); Console.ForegroundColor = ConsoleColor.Blue; Console.WriteLine("╔" + new string('═', 60) + "╗"); int s = (60 - t.Length) / 2; Console.Write("║" + new string(' ', s)); Console.ForegroundColor = ConsoleColor.White; Console.Write(t); Console.ForegroundColor = ConsoleColor.Blue; Console.WriteLine(new string(' ', 60 - s - t.Length) + "║"); Console.WriteLine("╚" + new string('═', 60) + "╝"); Console.ResetColor(); }
         static void WriteColor(string t, ConsoleColor c) { Console.ForegroundColor = c; Console.Write(t); Console.ResetColor(); }
         static void PrintError(string m) { WriteColor($"\n [X] {m}", ConsoleColor.Red); }
